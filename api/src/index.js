@@ -15,7 +15,7 @@ const apiRouter = express.Router();
 // You can delete this route once you add your own routes
 apiRouter.get("/", async (req, res) => {
   res.send(
-    "API is working!, try to access /api/future-meals, /api/past-meals, /api/all-meals, /api/first-meal, /api/last-meal"
+    "API is working!, try to access /api/future-meals, /api/past-meals, /api/all-meals, /api/first-meal, /api/last-meal",
   );
 });
 
