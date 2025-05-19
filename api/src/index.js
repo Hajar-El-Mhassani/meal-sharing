@@ -5,28 +5,39 @@ import bodyParser from "body-parser";
 import knex from "./database_client.js";
 import nestedRouter from "./routers/nested.js";
 import { StatusCodes } from "http-status-codes";
+import connection from "./database_client.js";
 
+// Check if the database connection is successful
+const connectToDatabase = async () => {
+  try {
+    await connection.raw("SELECT 1");
+    console.log("Database connection successful!");
+  } catch (error) {
+    console.error("Database connection failed:", error);
+  }
+};
+connectToDatabase();
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
 const apiRouter = express.Router();
 
-// You can delete this route once you add your own routes
-apiRouter.get("/", async (req, res) => {
-  res.send(
-    "API is working!, try to access /api/future-meals, /api/past-meals, /api/all-meals, /api/first-meal, /api/last-meal"
-  );
-});
-
 //Route to get all meals in the future relative  to the current time
 apiRouter.get("/future-meals", async (req, res) => {
   try {
     const futureMeals = await knex("meal")
       .select("*")
-      .where(`when`, ">", knex.fn.now());
-    console.log(futureMeals);
-    res.status(StatusCodes.OK).json(futureMeals);
+      .where(knex.ref("when"), ">", knex.fn.now());
+    // check if futureMeals is not empty
+    if (futureMeals) {
+      console.log(futureMeals);
+      res.status(StatusCodes.OK).json(futureMeals);
+    } else {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "No future meals found",
+      });
+    }
   } catch (error) {
     console.error("Error fetching future meals:", error);
     res
@@ -40,8 +51,15 @@ apiRouter.get("/past-meals", async (req, res) => {
     const pastMeals = await knex("meal")
       .select("*")
       .where(`when`, "<", knex.fn.now());
-    console.log(pastMeals);
-    res.status(StatusCodes.OK).json(pastMeals);
+    // check if pastMeals is not empty
+    if (pastMeals) {
+      console.log(pastMeals);
+      res.status(StatusCodes.OK).json(pastMeals);
+    } else {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        message: "No past meals found",
+      });
+    }
   } catch (error) {
     console.error("Error fetching past meals:", error);
     res
@@ -71,11 +89,11 @@ apiRouter.get("/first-meal", async (req, res) => {
     const firstMeal = await knex("meal")
       .select("*")
       .orderBy("id", "ASC")
-      .limit(1);
+      .first();
     res.status(StatusCodes.OK).json(firstMeal);
     console.log(firstMeal);
   } catch (err) {
-    res.satatus(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       error: "Internal server error",
     });
     console.log("Error fetching first meal:", err);
@@ -88,7 +106,7 @@ apiRouter.get("/last-meal", async (req, res) => {
     const lastMeal = await knex("meal")
       .select("*")
       .orderBy("id", "DESC")
-      .limit(1);
+      .first();
     res.status(StatusCodes.OK).json(lastMeal);
     console.log(lastMeal);
   } catch (err) {
@@ -105,5 +123,7 @@ apiRouter.use("/nested", nestedRouter);
 app.use("/api", apiRouter);
 
 app.listen(process.env.PORT, () => {
-  console.log(`API listening on port ${process.env.PORT}`);
+  console.log(
+    `API listening on port at http://localhost:${process.env.PORT}/api`
+  );
 });
