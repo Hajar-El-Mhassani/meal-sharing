@@ -6,6 +6,8 @@ import knex from "./database_client.js";
 import nestedRouter from "./routers/nested.js";
 import { StatusCodes } from "http-status-codes";
 import connection from "./database_client.js";
+import mealsRouter from "./routers/meals.js";
+import reservationsRouter from "./routers/reservations.js";
 
 // Check if the database connection is successful
 const connectToDatabase = async () => {
@@ -120,6 +122,12 @@ apiRouter.get("/last-meal", async (req, res) => {
 // This nested router example can also be replaced with your own sub-router
 apiRouter.use("/nested", nestedRouter);
 
+// This is the router for the meals
+apiRouter.use("/", mealsRouter);
+
+// This is the router for the reservations
+apiRouter.use("/", reservationsRouter);
+// This is the main router for the API
 app.use("/api", apiRouter);
 
 app.listen(process.env.PORT, () => {
