@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import morgan from "morgan";
 import bodyParser from "body-parser";
 import knex from "./database_client.js";
 import nestedRouter from "./routers/nested.js";
@@ -22,7 +23,7 @@ connectToDatabase();
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-
+app.use(morgan("dev"));
 const apiRouter = express.Router();
 
 //Route to get all meals in the future relative  to the current time
