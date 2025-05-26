@@ -49,7 +49,7 @@ mealsRouter.post("/meals", async (req, res) => {
         message: "All fields are required",
       });
     }
-    const addMeas = await connection("meal").insert({
+    const addMeal = await connection("meal").insert({
       title,
       description,
       location,
@@ -58,10 +58,7 @@ mealsRouter.post("/meals", async (req, res) => {
       price,
       created_date,
     });
-    res.status(StatusCodes.CREATED).json({
-      message: "Meal created successfully",
-      meal: req.body,
-    });
+    res.status(StatusCodes.CREATED).send();
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: "Internal server error",
@@ -97,7 +94,7 @@ mealsRouter.put("/meals/:id", async (req, res) => {
   const { title, description, location, when, max_reservation, price } =
     req.body;
   try {
-    const updatedmeal = await connection("meal").where({ id }).update({
+    const updatedMeal = await connection("meal").where({ id }).update({
       title,
       description,
       location,
@@ -105,11 +102,8 @@ mealsRouter.put("/meals/:id", async (req, res) => {
       max_reservation,
       price,
     });
-    if (updatedmeal) {
-      res.status(StatusCodes.OK).json({
-        message: "Meal updated successfully",
-        meal: req.body,
-      });
+    if (updatedMeal) {
+      res.status(StatusCodes.OK).send();
     } else {
       res.status(StatusCodes.NOT_FOUND).json({
         message: "Meal not found",
@@ -127,11 +121,11 @@ mealsRouter.put("/meals/:id", async (req, res) => {
 mealsRouter.delete("/meals/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const deletedMeals = await connection("meal").where({ id }).del();
-    if (deletedMeals) {
+    const deletedMeal = await connection("meal").where({ id }).del();
+    if (deletedMeal) {
       res.status(StatusCodes.OK).json({
         message: "Meal deleted successfully",
-        meal: deletedMeals,
+        meal: id,
       });
     } else {
       res.status(StatusCodes.NOT_FOUND).json({

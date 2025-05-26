@@ -66,10 +66,7 @@ reservationsRouter.post("/reservations", async (req, res) => {
         contact_email,
       })
       .into("reservation");
-    res.status(StatusCodes.CREATED).json({
-      message: "Reservation created successfully",
-      reservation: req.body,
-    });
+    res.status(StatusCodes.CREATED).send();
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       message: "Internal server error",
@@ -123,10 +120,7 @@ reservationsRouter.put("/reservations/:id", async (req, res) => {
         contact_email,
       });
     if (updatedReservation) {
-      res.status(StatusCodes.OK).json({
-        message: "Reservation updated successfully",
-        reservation: req.body,
-      });
+      res.status(StatusCodes.OK).send();
     } else {
       res.status(StatusCodes.NOT_FOUND).json({
         message: "Reservation not found",
@@ -150,7 +144,7 @@ reservationsRouter.delete("/reservations/:id", async (req, res) => {
     if (deletedReservation) {
       res.status(StatusCodes.OK).json({
         message: "Reservation deleted successfully",
-        reservation: req.body,
+        reservation: id,
       });
     } else {
       res.status(StatusCodes.NOT_FOUND).json({
