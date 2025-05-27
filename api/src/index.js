@@ -9,6 +9,7 @@ import { StatusCodes } from "http-status-codes";
 import connection from "./database_client.js";
 import mealsRouter from "./routers/meals.js";
 import reservationsRouter from "./routers/reservations.js";
+import reviewsRouter from "./routers/reviews.js";
 
 // Check if the database connection is successful
 const connectToDatabase = async () => {
@@ -128,6 +129,10 @@ apiRouter.use("/", mealsRouter);
 
 // This is the router for the reservations
 apiRouter.use("/", reservationsRouter);
+
+// This is the router for the reviews
+apiRouter.use("/", reviewsRouter);
+
 // This is the main router for the API
 app.use("/api", apiRouter);
 
