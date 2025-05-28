@@ -1,12 +1,10 @@
 import express from "express";
 import { StatusCodes } from "http-status-codes";
 import connection from "../database_client.js";
-import { validateMeal, validateParams } from "../middlewares/mealsValidate.js";
-import {
-  createMealSchema,
-  paramsSchema,
-  updateMealSchema,
-} from "../schemas/mealSchema.js";
+import { validateBody } from "../middlewares/validateBody.js";
+import { validateParamsId } from "../middlewares/validateParamsId.js";
+import { paramsSchema } from "../schemas/paramsIdSchema.js";
+import { createMealSchema, updateMealSchema } from "../schemas/mealSchema.js";
 
 const mealsRouter = express.Router();
 
@@ -30,9 +28,9 @@ mealsRouter.get("/meals", async (req, res) => {
 });
 
 // Router to create or send new data
-mealsRouter.post("/meals", validateMeal(createMealSchema), async (req, res) => {
+mealsRouter.post("/meals", validateBody(createMealSchema), async (req, res) => {
   try {
-    const createdMeal = req.validatedData;
+    const createdMeal = req.validatedBody;
     const addMeal = await connection("meal").insert(createdMeal);
     res.status(StatusCodes.CREATED).send();
   } catch (err) {
@@ -46,10 +44,10 @@ mealsRouter.post("/meals", validateMeal(createMealSchema), async (req, res) => {
 //router to get meals by ID
 mealsRouter.get(
   "/meals/:id",
-  validateParams(paramsSchema),
+  validateParamsId(paramsSchema),
   async (req, res) => {
     try {
-      const { id } = req.validatedParams;
+      const { id } = req.validatedParamsID;
       // use first() to get the first meal with the given id
       const meal = await connection("meal").select().where({ id }).first();
       // check if meal is not exists
@@ -71,11 +69,11 @@ mealsRouter.get(
 // router to get meals by title
 mealsRouter.put(
   "/meals/:id",
-  validateParams(paramsSchema),
-  validateMeal(updateMealSchema),
+  validateParamsId(paramsSchema),
+  validateBody(updateMealSchema),
   async (req, res) => {
-    const { id } = req.validatedParams;
-    const updateData = req.validatedData;
+    const { id } = req.validatedParamsID;
+    const updateData = req.validatedBody;
     try {
       const updatedMeal = await connection("meal")
         .where({ id })
@@ -99,9 +97,9 @@ mealsRouter.put(
 // router to delete meal by ID
 mealsRouter.delete(
   "/meals/:id",
-  validateParams(paramsSchema),
+  validateParamsId(paramsSchema),
   async (req, res) => {
-    const { id } = req.validatedParams;
+    const { id } = req.validatedParamsID;
     try {
       const deletedMeal = await connection("meal").where({ id }).del();
       if (deletedMeal) {

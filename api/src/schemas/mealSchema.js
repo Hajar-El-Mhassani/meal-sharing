@@ -15,7 +15,4 @@ export const createMealSchema = z.strictObject({
   created_date: z.coerce.date().optional(),
 });
 
-export const paramsSchema = z.strictObject({
-  id: z.string().regex(/^\d+$/, "ID must be a number").transform(Number),
-});
 export const updateMealSchema = createMealSchema.partial();

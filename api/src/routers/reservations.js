@@ -1,16 +1,13 @@
 import express from "express";
 import { StatusCodes } from "http-status-codes";
 import connection from "../database_client.js";
-import {
-  validateReservation,
-  validateParams,
-} from "../middlewares/reservationValidate.js";
+import { validateBody } from "../middlewares/validateBody.js";
+import { validateParamsId } from "../middlewares/validateParamsId.js";
+import { paramsSchema } from "../schemas/paramsIdSchema.js";
 import {
   reservationSchema,
-  paramsSchema,
   updateReservationSchema,
 } from "../schemas/reservationSchema.js";
-import { validate } from "graphql";
 
 const reservationsRouter = express.Router();
 
@@ -33,17 +30,42 @@ reservationsRouter.get("/reservations", async (req, res) => {
   }
 });
 
-//Adds a new reservation to the database
+//Adds a new reservation to the database (create a reservation for a specific meal)
 reservationsRouter.post(
   "/reservations",
-  validateReservation(reservationSchema),
+  validateBody(reservationSchema),
   async (req, res) => {
     try {
-      const createdData = req.validatedData;
+      const createdData = req.validatedBody;
       //Destructure required fields from validated data
-      const { contact_email, meal_id } = createdData;
+      const { contact_email, meal_id, number_of_guests } = createdData;
 
-      // check if the reservation already exists
+      //1. Check in the database if the meal with this meal_id exists
+      const meal = await connection("meal").where({ id: meal_id }).first();
+      if (!meal) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: "Meal not found",
+        });
+      }
+
+      //2. get how many guests already reserve
+      const total_of_existing_guests = await connection("reservation")
+        .where({ meal_id })
+        .sum("number_of_guests as total");
+
+      //ensure total_of_existing_guests is not null
+      const totalGuests = Number(total_of_existing_guests[0].total) || 0;
+      console.log(totalGuests);
+      // 3. Calculate remaining seats
+      const remainingSeats = meal.max_reservation - totalGuests;
+      console.log(remainingSeats);
+      // 4. Check if request exceeds available seats
+      if (number_of_guests > remainingSeats) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: `Only ${remainingSeats} seat(s) left for this meal.`,
+        });
+      }
+      //5. Check for duplicate reservation
       const existingReservation = await connection("reservation")
         .where({ contact_email, meal_id })
         .first();
@@ -69,9 +91,9 @@ reservationsRouter.post(
 //Gets the reservation by id
 reservationsRouter.get(
   "/reservations/:id",
-  validateParams(paramsSchema),
+  validateParamsId(paramsSchema),
   async (req, res) => {
-    const { id } = req.validatedParams;
+    const { id } = req.validatedParamsID;
     try {
       const reservation = await connection("reservation")
         .select()
@@ -95,12 +117,59 @@ reservationsRouter.get(
 //Updates the reservation by id
 reservationsRouter.put(
   "/reservations/:id",
-  validateParams(paramsSchema),
-  validateReservation(updateReservationSchema),
+  validateParamsId(paramsSchema),
+  validateBody(updateReservationSchema),
   async (req, res) => {
     try {
-      const { id } = req.validatedData;
-      const updatedData = req.validatedData;
+      const { id } = req.validatedParamsID;
+      console.log("validatedParamsID:", req.validatedParamsID);
+
+      const updatedData = req.validatedBody;
+      //Destructure required fields from validated data
+      const { contact_email, meal_id, number_of_guests } = updatedData;
+      console.log("validatedBody:", updatedData);
+
+      // Step 0: check if reservation exists
+      const reservation = await connection("reservation").where({ id }).first();
+      if (!reservation) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: "Reservation not found",
+        });
+      }
+
+      // Step 1: check if meal exists (if meal_id is present)
+      if (updatedData.meal_id !== undefined) {
+        const meal = await connection("meal")
+          .where({ id: updatedData.meal_id })
+          .first();
+        if (!meal) {
+          return res.status(StatusCodes.NOT_FOUND).json({
+            message: "Meal not found",
+          });
+        }
+
+        //2. get how many guests already reserve
+        const total_of_existing_guests = await connection("reservation")
+          .where({ meal_id })
+          .andWhereNot({ id }) // exclude the reservation being updated
+          .sum("number_of_guests as total");
+
+        //ensure total_of_existing_guests is not null
+        const totalGuests = Number(total_of_existing_guests[0].total) || 0;
+        console.log(totalGuests);
+        // 3. Calculate remaining seats
+        const remainingSeats = meal.max_reservation - totalGuests;
+        console.log(remainingSeats);
+        // 4. Check if request exceeds available seats
+        if (number_of_guests > remainingSeats) {
+          return res.status(StatusCodes.BAD_REQUEST).json({
+            message: `Only ${remainingSeats} seat(s) left for this meal.`,
+          });
+        }
+
+        console.log({ id, contact_email, meal_id });
+      }
+      //update the reservation
       const updatedReservation = await connection("reservation")
         .where({ id })
         .update(updatedData);
@@ -123,9 +192,9 @@ reservationsRouter.put(
 //Deletes the reservation by id
 reservationsRouter.delete(
   "/reservations/:id",
-  validateParams(paramsSchema),
+  validateParamsId(paramsSchema),
   async (req, res) => {
-    const { id } = req.validatedParams;
+    const { id } = req.validatedParamsID;
     try {
       const deletedReservation = await connection("reservation")
         .where({ id })
