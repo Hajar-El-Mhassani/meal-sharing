@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import morgan from "morgan";
 import bodyParser from "body-parser";
 import knex from "./database_client.js";
 import nestedRouter from "./routers/nested.js";
@@ -8,6 +9,7 @@ import { StatusCodes } from "http-status-codes";
 import connection from "./database_client.js";
 import mealsRouter from "./routers/meals.js";
 import reservationsRouter from "./routers/reservations.js";
+import reviewsRouter from "./routers/reviews.js";
 
 // Check if the database connection is successful
 const connectToDatabase = async () => {
@@ -22,7 +24,7 @@ connectToDatabase();
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-
+app.use(morgan("dev"));
 const apiRouter = express.Router();
 
 //Route to get all meals in the future relative  to the current time
@@ -127,6 +129,10 @@ apiRouter.use("/", mealsRouter);
 
 // This is the router for the reservations
 apiRouter.use("/", reservationsRouter);
+
+// This is the router for the reviews
+apiRouter.use("/", reviewsRouter);
+
 // This is the main router for the API
 app.use("/api", apiRouter);
 
