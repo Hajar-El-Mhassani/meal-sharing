@@ -5,41 +5,93 @@ import { validateBody } from "../middlewares/validateBody.js";
 import { validateParamsId } from "../middlewares/validateParamsId.js";
 import { paramsSchema } from "../schemas/paramsIdSchema.js";
 import { createMealSchema, updateMealSchema } from "../schemas/mealSchema.js";
+import { mealQueryValidator } from "../middlewares/validateQueryMeal.js";
+import { queryMealSchema } from "../schemas/queryMealSchema.js";
 
 const mealsRouter = express.Router();
 
 //Router to get all meals
-mealsRouter.get("/meals", async (req, res) => {
-  try {
-    const meals = await connection.select().from("meal");
-    // check if meals is not empty
-    console.log(meals);
-    if (meals.length > 0) {
-      res.status(StatusCodes.OK).json(meals);
-    } else {
-      res.status(StatusCodes.NOT_FOUND).send();
-    }
-  } catch (err) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Internal server error",
-      error: err.message,
-    });
-  }
-});
+mealsRouter.get(
+  "/meals",
+  mealQueryValidator(queryMealSchema),
+  async (req, res) => {
+    try {
+      const {
+        maxPrice,
+        availableReservations,
+        title,
+        dateAfter,
+        dateBefore,
+        limit,
+        sortKey,
+        sortDir,
+      } = req.validatedMealQuery;
 
-// Router to create or send new data
-mealsRouter.post("/meals", validateBody(createMealSchema), async (req, res) => {
-  try {
-    const createdMeal = req.validatedBody;
-    const addMeal = await connection("meal").insert(createdMeal);
-    res.status(StatusCodes.CREATED).send();
-  } catch (err) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      message: "Internal server error",
-      error: err.message,
-    });
+      let query = connection("meal").select("meal.*");
+
+      // JOIN and GROUP BY if availableReservations is used
+      if (availableReservations !== undefined) {
+        query
+          .leftJoin("reservation", "meal.id", "reservation.meal_id")
+          .groupBy("meal.id")
+          .select(
+            connection.raw(
+              //If the sum is NULL, return 0 instead
+              "COALESCE(SUM(reservation.number_of_guests), 0) as total_guests"
+            )
+          );
+
+        if (availableReservations === true) {
+          query.havingRaw(
+            "meal.max_reservation > COALESCE(SUM(reservation.number_of_guests), 0)"
+          );
+        } else {
+          query.havingRaw(
+            "meal.max_reservation <= COALESCE(SUM(reservation.number_of_guests), 0)"
+          );
+        }
+      }
+
+      if (maxPrice) {
+        query.where("price", "<", maxPrice);
+      }
+
+      if (title) {
+        query.where("title", "like", `%${title}%`);
+      }
+
+      if (dateAfter) {
+        query.where("when", ">", dateAfter);
+      }
+
+      if (dateBefore) {
+        query.where("when", "<", dateBefore);
+      }
+
+      if (sortKey) {
+        const direction = sortDir === "desc" ? "desc" : "asc";
+        query.orderBy(sortKey, direction);
+      }
+
+      if (limit) {
+        query.limit(limit);
+      }
+
+      const meals = await query;
+
+      if (meals.length > 0) {
+        res.status(StatusCodes.OK).json(meals);
+      } else {
+        res.status(StatusCodes.NOT_FOUND).json({ message: "No meals found" });
+      }
+    } catch (err) {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        message: "Internal server error",
+        error: err.message,
+      });
+    }
   }
-});
+);
 
 //router to get meals by ID
 mealsRouter.get(
