@@ -101,7 +101,7 @@ reservationsRouter.get(
         .first();
       if (!reservation) {
         return res.status(StatusCodes.NOT_FOUND).json({
-          message: "Meal not found",
+          message: "Reservation not found",
         });
       } else {
         res.status(StatusCodes.OK).json(reservation);
@@ -122,14 +122,9 @@ reservationsRouter.put(
   async (req, res) => {
     try {
       const { id } = req.validatedParamsID;
-      console.log("validatedParamsID:", req.validatedParamsID);
-
       const updatedData = req.validatedBody;
-      //Destructure required fields from validated data
-      const { contact_email, meal_id, number_of_guests } = updatedData;
-      console.log("validatedBody:", updatedData);
 
-      // Step 0: check if reservation exists
+      // Step 1: Check if reservation exists
       const reservation = await connection("reservation").where({ id }).first();
       if (!reservation) {
         return res.status(StatusCodes.NOT_FOUND).json({
@@ -137,43 +132,62 @@ reservationsRouter.put(
         });
       }
 
-      // Step 1: check if meal exists (if meal_id is present)
-      if (updatedData.meal_id !== undefined) {
-        const meal = await connection("meal")
-          .where({ id: updatedData.meal_id })
-          .first();
-        if (!meal) {
-          return res.status(StatusCodes.NOT_FOUND).json({
-            message: "Meal not found",
-          });
-        }
+      // Use existing values if not provided in update
+      const mealIdToCheck = updatedData.meal_id || reservation.meal_id;
+      const guestCountToCheck =
+        updatedData.number_of_guests || reservation.number_of_guests;
 
-        //2. get how many guests already reserve
-        const total_of_existing_guests = await connection("reservation")
-          .where({ meal_id })
-          .andWhereNot({ id }) // exclude the reservation being updated
+      // Step 2: If meal_id is being updated or needed, check if the meal exists
+      const meal = await connection("meal")
+        .where({ id: mealIdToCheck })
+        .first();
+      if (!meal) {
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: "Meal not found",
+        });
+      }
+
+      // Step 3: If number_of_guests is being updated, check available seats
+      if (updatedData.number_of_guests) {
+        const totalGuestsRow = await connection("reservation")
+          .where({ meal_id: mealIdToCheck })
+          .andWhereNot({ id }) // exclude the current reservation
           .sum("number_of_guests as total");
 
-        //ensure total_of_existing_guests is not null
-        const totalGuests = Number(total_of_existing_guests[0].total) || 0;
-        console.log(totalGuests);
-        // 3. Calculate remaining seats
+        const totalGuests = Number(totalGuestsRow[0].total) || 0;
         const remainingSeats = meal.max_reservation - totalGuests;
-        console.log(remainingSeats);
-        // 4. Check if request exceeds available seats
-        if (number_of_guests > remainingSeats) {
+
+        if (guestCountToCheck > remainingSeats) {
           return res.status(StatusCodes.BAD_REQUEST).json({
             message: `Only ${remainingSeats} seat(s) left for this meal.`,
           });
         }
-
-        console.log({ id, contact_email, meal_id });
       }
-      //update the reservation
-      const updatedReservation = await connection("reservation")
+
+      // Step 4: Check for existing reservation with same email + meal (if either is being updated)
+      if (updatedData.contact_email || updatedData.meal_id) {
+        const existingReservation = await connection("reservation")
+          .where({
+            contact_email:
+              updatedData.contact_email || reservation.contact_email,
+            meal_id: updatedData.meal_id || reservation.meal_id,
+          })
+          .andWhereNot({ id }) // exclude current reservation
+          .first();
+
+        if (existingReservation) {
+          return res.status(StatusCodes.CONFLICT).json({
+            message:
+              "Another reservation already exists for this email and meal.",
+          });
+        }
+      }
+
+      // Step 5: Proceed with update
+      const updated = await connection("reservation")
         .where({ id })
         .update(updatedData);
-      if (updatedReservation) {
+      if (updated) {
         res.status(StatusCodes.OK).send();
       } else {
         res.status(StatusCodes.NOT_FOUND).json({
