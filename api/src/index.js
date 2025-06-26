@@ -3,6 +3,8 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import bodyParser from "body-parser";
+import path from "path";
+import { fileURLToPath } from "url";
 import knex from "./database_client.js";
 import nestedRouter from "./routers/nested.js";
 import { StatusCodes } from "http-status-codes";
@@ -27,7 +29,11 @@ app.use(bodyParser.json());
 app.use(morgan("dev"));
 const apiRouter = express.Router();
 
-//Route to get all meals in the future relative  to the current time
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ✅ serve /images from public/images
+app.use("/images", express.static(path.join(__dirname, "public/images")));
 apiRouter.get("/future-meals", async (req, res) => {
   try {
     const futureMeals = await knex("meal")

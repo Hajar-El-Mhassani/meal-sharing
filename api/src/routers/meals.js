@@ -78,11 +78,22 @@ mealsRouter.get(
       }
 
       const meals = await query;
+      // Build full image URL for each meal
 
       if (meals.length > 0) {
-        res.status(StatusCodes.OK).json(meals);
+        const baseUrl = `${req.protocol}://${req.get("host")}`;
+        const mealsWithFullImage = meals.map((meal) => ({
+          ...meal,
+          image: meal.image
+            ? `${baseUrl}/images/${meal.image}`
+            : `${baseUrl}/images/default.jpg`,
+        }));
+
+        return res.status(StatusCodes.OK).json(mealsWithFullImage);
       } else {
-        res.status(StatusCodes.NOT_FOUND).json({ message: "No meals found" });
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: "No meals found",
+        });
       }
     } catch (err) {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -104,10 +115,14 @@ mealsRouter.get(
       const meal = await connection("meal").select().where({ id }).first();
       // check if meal is not exists
       if (!meal) {
-        res.status(StatusCodes.NOT_FOUND).json({
+        return res.status(StatusCodes.NOT_FOUND).json({
           message: "Meal not found",
         });
       }
+      const baseUrl = `${req.protocol}://${req.get("host")}`;
+      meal.image = meal.image
+        ? `${baseUrl}/images/${meal.image}`
+        : `${baseUrl}/images/default.jpg`;
       console.log(meal);
       res.status(StatusCodes.OK).json(meal);
     } catch (err) {

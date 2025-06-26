@@ -1,11 +1,18 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import styles from "./meallist.module.css";
+import { Container, Box, Grid, Typography } from "@mui/material";
+import MealCard from "./Meal";
 import api from "../../utils/api";
 const MealList = () => {
   const [meals, setMeals] = useState([]);
 
   useEffect(() => {
+    /*************  ✨ Windsurf Command ⭐  *************/
+    /**
+   * Fetches meals from the API and updates the state with the response data.
+   *
+
+/*******  5f549e22-fea6-40d6-9ec4-9e566f67b20b  *******/
     const fetchMeals = async () => {
       try {
         const response = await fetch(api("/meals"));
@@ -21,36 +28,33 @@ const MealList = () => {
   }, []);
 
   return (
-    <section className={styles.sectionMeal}>
-      <h2>Meals</h2>
-      <div className={styles.meals}>
-        {meals.map((meal) => (
-          <div key={meal.id} className={styles.meal}>
-            <img
-              src="/meals/image.png"
-              alt={meal.title}
-              className={styles.mealImage}
-            />
-            <h3>{meal.title}</h3>
-            <p>{meal.description}</p>
-            <p>
-              <strong>Date: </strong>
-              {new Date(meal.when).toLocaleDateString("en-EN")}
-            </p>
-            <p>
-              <strong>Location: </strong>
-              {meal.location}
-            </p>
-            <p>
-              <strong>Max reservation: </strong> {meal.max_reservation}
-            </p>
-            <p>
-              <strong>Price:</strong> {meal.price}
-            </p>
-          </div>
-        ))}
-      </div>
-    </section>
+    <Container maxWidth="lg">
+      <Box
+        sx={{
+          margin: "0 auto",
+          padding: "2rem",
+        }}
+      >
+        <Typography
+          variant="h4"
+          sx={{
+            textAlign: "center",
+            marginBottom: "2rem",
+            fontSize: "2rem",
+            color: "#333",
+          }}
+        >
+          Meals
+        </Typography>
+        <Grid container spacing={4} justifyContent="center">
+          {meals.map((meal) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={meal.id}>
+              <MealCard meal={meal} />
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+    </Container>
   );
 };
 
