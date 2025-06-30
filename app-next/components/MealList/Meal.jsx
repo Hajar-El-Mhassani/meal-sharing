@@ -1,52 +1,33 @@
-import { Card, CardMedia, Box, CardContent, Typography } from "@mui/material";
+// components/MealCard.jsx
+import styles from "./MealCard.module.css";
 
 const MealCard = ({ meal }) => {
   return (
-    <Card
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 1,
-        borderRadius: 0,
-        height: "100%",
-        maxWidth: 300,
-        margin: "0 auto",
-      }}
-    >
-      <CardMedia
-        component="img"
-        height="194"
-        image="/meals/image.png"
-        alt={meal.title}
-      />
-      <CardContent sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        <Typography variant="h6">{meal.title}</Typography>
-        <Typography variant="body2" color="text.secondary">
-          {meal.description}
-        </Typography>
-        <Typography variant="body2">
-          Date:{" "}
-          <Box component="span" color="text.secondary">
+    <div className={styles.card}>
+      <img src={meal.image} alt={meal.title} className={styles.image} />
+
+      <div className={styles.content}>
+        <h2 className={styles.title}>{meal.title}</h2>
+        <p className={styles.description}>{meal.description}</p>
+        <p>
+          <span className={styles.label}>Date:</span>{" "}
+          <span className={styles.secondary}>
             {new Date(meal.when).toLocaleDateString("en-EN")}
-          </Box>
-        </Typography>
-        <Typography variant="body2">
-          Location:{" "}
-          <Box component="span" color="text.secondary">
-            {meal.location}
-          </Box>
-        </Typography>
-        <Typography variant="body2">
-          Max reservation:{" "}
-          <Box component="span" color="text.secondary">
-            {meal.max_reservation}
-          </Box>
-        </Typography>
-        <Typography variant="subtitle1" color="#27ae60">
-          <strong> Price:</strong> ${meal.price}
-        </Typography>
-      </CardContent>
-    </Card>
+          </span>
+        </p>
+        <p>
+          <span className={styles.label}>Location:</span>{" "}
+          <span className={styles.secondary}>{meal.location}</span>
+        </p>
+        <p>
+          <span className={styles.label}>Max reservation:</span>{" "}
+          <span className={styles.secondary}>{meal.max_reservation}</span>
+        </p>
+        <p className={styles.price}>
+          <strong>Price:</strong> ${meal.price}
+        </p>
+      </div>
+    </div>
   );
 };
 
