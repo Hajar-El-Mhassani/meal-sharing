@@ -32,7 +32,7 @@ const apiRouter = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ✅ serve /images from public/images
+
 app.use("/images", express.static(path.join(__dirname, "public/images")));
 apiRouter.get("/future-meals", async (req, res) => {
   try {
