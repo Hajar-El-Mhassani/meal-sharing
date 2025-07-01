@@ -1,15 +1,12 @@
-import HYFLogo from "@/assets/hyf.svg";
-import Image from "next/image";
-import "./HomePage.css";
-import MealList from "../MealList/MealList";
+import Link from "next/link";
+import MealList from "@/components/MealList/MealList";
 
-// Feel free to replace the content of this component with your own
-function HomePage() {
+export default function HomePage() {
   return (
-    <>
-      <MealList />
-    </>
+    <section className="px-6 sm:px-10 lg:px-20 py-2 max-w-screen-xl mx-auto text-center bg-lime-50 dark:bg-gray-800">
+      <div className="mx-auto w-full max-w-[960px]">
+        <MealList limit={4} />
+      </div>
+    </section>
   );
 }
-
-export default HomePage;
