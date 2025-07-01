@@ -6,23 +6,25 @@ import api from "../../utils/api";
 const MealList = ({
   limit,
   title = "Popular Dishes",
-  backGround = "bg-lime-60",
+  backGround = "bg-orange-400 dark:bg-gray-800",
 }) => {
   const [meals, setMeals] = useState([]);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    const fetchMeals = async () => {
-      try {
-        const response = await fetch(api("/meals"));
-        const data = await response.json();
+    fetch(api("/meals"))
+      .then((res) => res.json())
+      .then((data) => {
         setMeals(limit ? data.slice(0, limit) : data);
-      } catch (error) {
+      })
+      .catch((error) => {
         console.error("Failed to fetch meals:", error);
-      }
-    };
-
-    fetchMeals();
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [limit]);
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <section className={`w-full py-6 ${backGround}`}>
