@@ -5,6 +5,7 @@ import { validateBody } from "../middlewares/validateBody.js";
 import { validateParamsId } from "../middlewares/validateParamsId.js";
 import { paramsSchema } from "../schemas/paramsIdSchema.js";
 import { reviewSchema, updateReviewSchema } from "../schemas/reviewSchema.js";
+import { paramsReviwIdSchema } from "../schemas/paramsReviewSchema.js";
 
 const reviewsRouter = express.Router();
 
@@ -21,7 +22,7 @@ reviewsRouter.get("/reviews", async (req, res) => {
 //Router to get all reviews for a specific meal
 reviewsRouter.get(
   "/meals/:meal_id/reviews",
-  validateParamsId(paramsSchema),
+  validateParamsId(paramsReviwIdSchema),
   async (req, res) => {
     const { meal_id } = req.validatedParamsID;
     console.log("meal_id:", meal_id);

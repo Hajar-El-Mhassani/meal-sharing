@@ -38,8 +38,14 @@ reservationsRouter.post(
     try {
       const createdData = req.validatedBody;
       //Destructure required fields from validated data
-      const { contact_email, meal_id, number_of_guests } = createdData;
-
+      const {
+        contact_email,
+        contact_name,
+        contact_phonenumber,
+        meal_id,
+        number_of_guests,
+      } = createdData;
+      console.log("New reservation:", createdData);
       //1. Check in the database if the meal with this meal_id exists
       const meal = await connection("meal").where({ id: meal_id }).first();
       if (!meal) {
@@ -70,6 +76,7 @@ reservationsRouter.post(
         .where({ contact_email, meal_id })
         .first();
       if (existingReservation) {
+        console.log("Duplicate reservation detected:", contact_email);
         return res.status(StatusCodes.CONFLICT).json({
           message: "Reservation already exists",
         });
@@ -80,7 +87,18 @@ reservationsRouter.post(
         .into("reservation");
       res.status(StatusCodes.CREATED).send();
     } catch (err) {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      // Handle duplicate email (unique constraint violation)
+      if (
+        err.code === "ER_DUP_ENTRY" &&
+        err.message.includes("reservation.UQ_contact_email")
+      ) {
+        return res.status(StatusCodes.CONFLICT).json({
+          message: "Reservation already exists with this email.",
+        });
+      }
+
+      // Default to internal error
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         message: "Internal server error",
         error: err.message,
       });
