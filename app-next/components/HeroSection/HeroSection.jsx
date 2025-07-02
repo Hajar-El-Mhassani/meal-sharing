@@ -10,7 +10,7 @@ export default function HeroSection() {
           <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
             Discover and share{" "}
             <span className="text-orange-400">delicious</span>{" "}
-            <span className="text-lime-700">recipes</span> made with love.
+            <span className="text-lime-700">dishes</span> made with love.
           </h1>
           <p className="mt-4 text-lg text-gray-700 dark:text-gray-300">
             Bringing People Together Through Tasty Homemade Meals

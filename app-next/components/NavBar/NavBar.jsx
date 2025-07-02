@@ -7,7 +7,7 @@ function NavLink({ href, label, mobile = false }) {
   //get the current path
   const pathname = usePathname();
 
-  const isActive = pathname === href;
+  const isActive = pathname === href || pathname.startsWith(`${href}/`);
 
   const baseClasses =
     "text-md font-bold text-gray-900 dark:text-gray-200 hover:text-orange-400 dark:hover:text-orange-400 transition";

@@ -1,3 +1,4 @@
+import Link from "next/link";
 const MealCard = ({ meal }) => {
   return (
     <div className="grid grid-rows-[auto_1fr] w-full max-w-[300px]  gap-2 h-full  rounded-lg bg-white shadow-sm overflow-hidden transition-transform duration-200 hover:-translate-y-1">
@@ -28,11 +29,20 @@ const MealCard = ({ meal }) => {
             <span className="font-medium">Max reservation:</span>{" "}
             {meal.max_reservation}
           </p>
+          <p className="text-lime-600 font-stretch-expanded font-bold text-base mt-2">
+            ${meal.price}
+          </p>
         </div>
 
-        <p className="text-orange-600 font-bold text-base mt-2 border hover:bg-orange-600 px-3 py-1 rounded-2xl inline-block">
-          ${meal.price}
-        </p>
+        {/* Bottom right action */}
+        <div className="mt-4 text-right">
+          <Link
+            href={`/meals/${meal.id}`}
+            className="inline-block px-4 py-1 bg-yellow-300 text-sm text-white   rounded-2xl hover:bg-blue-600 transition"
+          >
+            See Details &rarr;
+          </Link>
+        </div>
       </div>
     </div>
   );

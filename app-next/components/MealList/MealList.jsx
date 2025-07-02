@@ -6,7 +6,7 @@ import api from "../../utils/api";
 const MealList = ({
   limit,
   title = "Popular Dishes",
-  backGround = "bg-orange-400 dark:bg-gray-800",
+  backGround = "bg-amber-300 dark:bg-gray-800",
 }) => {
   const [meals, setMeals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,9 +28,11 @@ const MealList = ({
 
   return (
     <section className={`w-full py-6 ${backGround}`}>
-      <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">
-        {title}
-      </h2>
+      {title && (
+        <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-8">
+          {title}
+        </h2>
+      )}
       <div className="grid w-full gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 justify-items-center">
         {meals.map((meal) => (
           <MealCard key={meal.id} meal={meal} />
