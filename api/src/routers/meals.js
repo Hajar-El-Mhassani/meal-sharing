@@ -111,19 +111,35 @@ mealsRouter.get(
   async (req, res) => {
     try {
       const { id } = req.validatedParamsID;
-      // use first() to get the first meal with the given id
-      const meal = await connection("meal").select().where({ id }).first();
-      // check if meal is not exists
+
+      // 1. Get the meal by ID
+      const meal = await connection("meal").where({ id }).first();
       if (!meal) {
         return res.status(StatusCodes.NOT_FOUND).json({
           message: "Meal not found",
         });
       }
+
+      // 2. Get total guests already reserved for this meal
+      const totalGuestsRow = await connection("reservation")
+        .where({ meal_id: id })
+        .sum("number_of_guests as total");
+
+      const totalGuests = Number(totalGuestsRow[0].total) || 0;
+
+      // 3. Calculate available reservations
+      const availableReservations = meal.max_reservation - totalGuests;
+
+      // 4. Add full image path
       const baseUrl = `${req.protocol}://${req.get("host")}`;
       meal.image = meal.image
         ? `${baseUrl}/images/${meal.image}`
         : `${baseUrl}/images/default.jpg`;
-      console.log(meal);
+
+      // 5. Add the availableReservations to the meal object
+      meal.available_reservations = availableReservations;
+
+      // 6. Return the meal
       res.status(StatusCodes.OK).json(meal);
     } catch (err) {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -133,6 +149,7 @@ mealsRouter.get(
     }
   }
 );
+
 // router to get meals by title
 mealsRouter.put(
   "/meals/:id",
