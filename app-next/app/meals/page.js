@@ -1,5 +1,5 @@
 import MealList from "@/components/MealList/MealList";
-
+import MealFilters from "@/components/FilterMeals/MealFilters";
 const MealsPage = () => {
   return (
     <section className="px-6 pt-20 sm:px-10 lg:px-20 py-2  max-w-screen-xl mx-auto text-center  dark:bg-gray-800">
@@ -11,6 +11,7 @@ const MealsPage = () => {
         Explore a variety of delicious dishes prepared with love. Whether you're
         craving something spicy, sweet, or savory
       </p>
+      <MealFilters />
       <MealList title="" backGround="bg-white" />
     </section>
   );

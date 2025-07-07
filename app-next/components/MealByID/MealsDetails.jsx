@@ -6,13 +6,13 @@ export default function MealDetails({ meal, onReserveClick }) {
   if (!meal) return null;
 
   return (
-    <div className="relative bg-white shadow-xl rounded-2xl border-2 border-orange-600 max-w-6xl mx-auto mt-24 px-6 md:px-10 py-5">
+    <div className="relative bg-white shadow-xl rounded-2xl border-2 border-lime-600 max-w-6xl mx-auto mt-24 px-6 md:px-10 py-5">
       {/* Top Center circle image */}
       <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 z-10">
         <img
           src={meal.image}
           alt={meal.title}
-          className="w-32 h-32 rounded-full border-4 border-orange-600 shadow-md object-cover"
+          className="w-32 h-32 rounded-full  border-lime-600 shadow-md object-cover"
         />
       </div>
 
@@ -27,7 +27,12 @@ export default function MealDetails({ meal, onReserveClick }) {
           <p>
             <span className="font-semibold">Date:</span>
             <br />
-            {new Date(meal.when).toLocaleDateString("en-EN")}
+            {new Date(meal.when).toLocaleDateString("en-GB", {
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
           </p>
           <p>
             <span className="font-semibold">Location:</span>
@@ -35,9 +40,9 @@ export default function MealDetails({ meal, onReserveClick }) {
             {meal.location}
           </p>
           <p>
-            <span className="font-semibold"> Max Guests:</span>
+            <span className="font-semibold"> Available Seats:</span>
             <br />
-            {meal.max_reservation}
+            {meal.available_reservations}
           </p>
           <p className="text-lime-700 font-bold text-lg">${meal.price}</p>
         </div>
@@ -75,8 +80,8 @@ export default function MealDetails({ meal, onReserveClick }) {
 
         {/* Reviews Box */}
         <div className="md:w-1/2 bg-gray-50 border border-gray-200 p-6 rounded-lg shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">
-            📝 Reviews
+          <h2 className="text-lg font-semibold text-blue-800 mb-4">
+            Meal Reviews
           </h2>
           <MealReviews mealId={meal.id} />
         </div>

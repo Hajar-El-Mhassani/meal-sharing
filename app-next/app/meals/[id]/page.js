@@ -21,8 +21,7 @@ export default function MealByIdPage() {
   const [showModal, setShowModal] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
   const [reservationError, setReservationError] = useState("");
-
-  useEffect(() => {
+  const fetchMeal = () => {
     fetch(api(`/meals/${id}`))
       .then((res) => res.json())
       .then(setMeal)
@@ -30,6 +29,17 @@ export default function MealByIdPage() {
         console.error("Failed to fetch meal:", error);
         alert("Could not load the meal. Please try again later.");
       });
+  };
+  useEffect(() => {
+    fetchMeal();
+    // Update the meal every 5 seconds
+    const interval = setInterval(() => {
+      fetchMeal();
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+    };
   }, [id]);
 
   const handleInputChange = (e) => {
