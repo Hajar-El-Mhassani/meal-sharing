@@ -8,3 +8,15 @@ body,
   height: 100%;
   width: 100%;
 }
+.bg-meal-hero {
+  background-image: url("/meal2.JPG");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.bg-meal-service-hero {
+  background-image: url("/hero/hero1.JPG");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

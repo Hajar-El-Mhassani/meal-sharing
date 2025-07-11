@@ -2,18 +2,26 @@ import MealList from "@/components/MealList/MealList";
 import MealFilters from "@/components/FilterMeals/MealFilters";
 const MealsPage = () => {
   return (
-    <section className="px-6 pt-20 sm:px-10 lg:px-20 py-2  max-w-screen-xl mx-auto text-center  dark:bg-gray-800">
-      <h1 className="text-3xl font-bold text-gray-800 mb-4">
-        Discover <span className="text-orange-400">Delicious</span> Meals from
-        All Around of <span className="text-lime-700">the World</span>
-      </h1>
-      <p className="text-gray-500 mb-6">
-        Explore a variety of delicious dishes prepared with love. Whether you're
-        craving something spicy, sweet, or savory
-      </p>
-      <MealFilters />
-      <MealList title="" backGround="bg-white" />
-    </section>
+    <>
+      <section className=" bg-meal-hero relative h-[60vh] flex items-center justify-center text-center text-white">
+        <div className="bg-lime-600/30 w-full h-full absolute top-0 left-0"></div>
+        <div className="relative z-10 max-w-2xl px-6">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+            Discover <span className="text-orange-400">All Delicious</span>{" "}
+            Meals from
+            <br />
+            All Around <span className="text-lime-900">the World</span>
+          </h1>
+        </div>
+      </section>
+
+      <section className="px-6 sm:px-10 lg:px-20 py-2 max-w-screen-xl bg-white mx-auto text-center bg-white-300 dark:bg-gray-800">
+        <div className="mx-auto w-full ">
+          <MealFilters />
+          <MealList title="" backGround="white" />
+        </div>
+      </section>
+    </>
   );
 };
 export default MealsPage;
