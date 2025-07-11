@@ -8,7 +8,7 @@ export const mealQueryValidator = (schema) => async (req, res, next) => {
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: result.error, message: "Invalid query parameters" });
     }
-    req.validatedMealQuery = req.query;
+    req.validatedMealQuery = result.data;
     next();
   } catch (err) {
     res.status(StatusCodes.BAD_REQUEST).json({
