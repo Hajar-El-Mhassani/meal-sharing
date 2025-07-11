@@ -67,7 +67,7 @@ export default function MealReviews({ mealId }) {
   };
 
   return (
-    <div className="mt-10  pt-1">
+    <div className="mt-6  pt-1">
       {/* Review List */}
       {error && <p className="text-red-500 mb-2">{error}</p>}
       {reviews.length > 0 ? (
@@ -126,7 +126,7 @@ export default function MealReviews({ mealId }) {
         </button>
       </form>
 
-      {message && <p className="text-green-600 mt-2">{message}</p>}
+      {message && <p className="text-green-700 mt-2">{message}</p>}
     </div>
   );
 }

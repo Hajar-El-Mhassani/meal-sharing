@@ -7,21 +7,23 @@ export default function ReservationModal({
   errorMessage,
 }) {
   return (
-    <div className="fixed inset-0 bg-transparent  flex justify-center items-center z-60">
-      <div className="bg-white dark:bg-gray-800 p-6 rounded shadow-md w-full max-w-md relative">
+    <div className="fixed inset-0 bg-transparent border  flex justify-center items-center z-60">
+      <div className="bg-white dark:bg-gray-800 p-10  rounded shadow-md w-full max-w-md relative">
         <button
           onClick={onClose}
-          className="absolute top-2 right-3 text-xl text-gray-500 hover:text-red-600"
+          className="absolute top-2 right-3 text-3xl text-red-600 hover:text-red-700"
         >
           &times;
         </button>
-        <h2 className="text-lg font-bold mb-4">Reserve for {meal.title}</h2>
+        <h2 className="text-lg font-bold mb-4 pb-3 pt-3.5">
+          Reserve for <span className="text-lime-600">{meal.title}</span>
+        </h2>
         {errorMessage && (
           <div className="text-red-500 text-sm mb-4 text-center font-semibold">
             {errorMessage}
           </div>
         )}
-        <form onSubmit={onSubmit} className="space-y-3">
+        <form onSubmit={onSubmit} className="space-y-7">
           <input
             type="text"
             name="contact_name"
@@ -29,7 +31,7 @@ export default function ReservationModal({
             onChange={onChange}
             placeholder="Your name"
             required
-            className="w-full border p-2 rounded"
+            className="w-full border border-neutral-400 p-2 rounded"
           />
           <input
             type="email"
@@ -39,7 +41,7 @@ export default function ReservationModal({
             placeholder="Email"
             title="Please enter a valid email address"
             required
-            className="w-full border p-2 rounded"
+            className="w-full border  border-neutral-400 p-2 rounded"
           />
           <input
             type="tel"
@@ -50,7 +52,7 @@ export default function ReservationModal({
             required
             pattern="^\d{11,15}$"
             title="Phone number must be 11 to 15 digits"
-            className="w-full border p-2 rounded"
+            className="w-full border   border-neutral-400 p-2 rounded"
           />
           <input
             type="number"
@@ -61,7 +63,7 @@ export default function ReservationModal({
             onChange={onChange}
             placeholder="Number of guests"
             required
-            className="w-full border p-2 rounded"
+            className="w-full border  border-neutral-400 p-2 rounded"
           />
           <button
             type="submit"

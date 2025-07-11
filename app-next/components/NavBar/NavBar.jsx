@@ -52,7 +52,6 @@ export default function Navbar() {
             <NavLink href="/meals" label="Meals" />
             <NavLink href="/about" label="About" />
             <NavLink href="/services" label="Services" />
-            <NavLink href="/contact" label="Contact Us" />
           </div>
 
           {/* Mobile menu button */}
@@ -96,7 +95,6 @@ export default function Navbar() {
           <NavLink href="/meals" label="Meals" mobile />
           <NavLink href="/about" label="About" mobile />
           <NavLink href="/services" label="Services" mobile />
-          <NavLink href="/contact" label="Contact Us" mobile />
         </div>
       )}
     </header>
