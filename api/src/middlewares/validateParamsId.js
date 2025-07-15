@@ -8,7 +8,7 @@ export const validateParamsId = (schema) => async (req, res, next) => {
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: result.error, message: "Invalid parameters" });
     }
-    req.validatedParamsID = result.data; // Assign the validated params back to req.params
+    req.validatedParamsId = result.data; // Assign the validated params back to req.params
     next(); // Call the next middleware or route handler
   } catch (error) {
     console.error("Validation error:", error);

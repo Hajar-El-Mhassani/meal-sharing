@@ -69,7 +69,7 @@ reviewsRouter.get(
   validateParamsId(paramsSchema),
   async (req, res) => {
     try {
-      const { id } = req.validatedParamsID;
+      const { id } = req.validatedParamsId;
       const review = await connection("review")
         .select("*")
         .where({ id })
@@ -118,6 +118,7 @@ reviewsRouter.post("/reviews", validateBody(reviewSchema), async (req, res) => {
     const newReview = await connection("review").insert(validatedData);
     res.status(StatusCodes.CREATED).send(newReview);
   } catch (err) {
+    console.error("POST /reviews failed:", err);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
   }
 });
