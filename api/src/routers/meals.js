@@ -57,7 +57,7 @@ mealsRouter.get(
       }
 
       if (title) {
-        query.where("title", "like", `%${title}%`);
+        query.where("title", "ilike", `%${title}%`);
       }
 
       if (dateAfter) {
