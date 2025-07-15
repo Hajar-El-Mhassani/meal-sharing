@@ -69,7 +69,7 @@ reviewsRouter.get(
   validateParamsId(paramsSchema),
   async (req, res) => {
     try {
-      const { id } = req.validatedParamsId;
+      const { id } = req.validatedParamsID;
       const review = await connection("review")
         .select("*")
         .where({ id })
