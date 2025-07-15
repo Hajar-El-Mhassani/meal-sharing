@@ -1,6 +1,3 @@
-"use client";
-import { useState } from "react";
-
 const sections = [
   {
     title: "Who We Are",
