@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-
-export default function HeroSection() {
+import type { JSX } from "react";
+export default function HeroSection(): JSX.Element {
   return (
     <section className="py-10 dark:bg-gray-900 ">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col-reverse lg:flex-row items-center justify-between gap-10">

@@ -1,31 +1,59 @@
 "use client";
-import { useEffect, useState } from "react";
-import api from "@/utils/api";
 
-export default function MealReviews({ mealId }) {
-  const [reviews, setReviews] = useState([]);
-  const [form, setForm] = useState({
+import { useEffect, useState } from "react";
+import api from "../../utils/api";
+import type { Review, ReviewApi } from "../../types/review";
+import type { JSX } from "react";
+/// Props for MealReviews component
+type MealReviewsProps = {
+  mealId: number;
+};
+
+type ReviewForm = {
+  title: string;
+  description: string;
+  stars: number;
+};
+
+/**
+ * A component that displays a list of reviews for a meal and allows the user to submit a new review.
+ *
+ * @param {number} mealId - The id of the meal to fetch reviews for.
+ *
+ * @returns {React.ReactElement} - A React component that displays a list of reviews and a form to submit a new review.
+ */
+export default function MealReviews({ mealId }: MealReviewsProps): JSX.Element {
+  //It’s an array of Review objects, and it's start as an empty array
+  const [reviews, setReviews] = useState<Review[]>([]);
+  //form state for the review form it object of type ReviewForm
+  const [form, setForm] = useState<ReviewForm>({
     title: "",
     description: "",
     stars: 5,
   });
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchReviews = async () => {
     try {
-      console.log("Submitting review:", {
-        ...form,
-        stars: Number(form.stars),
-        meal_id: Number(mealId),
-      });
-
       const res = await fetch(api(`/meals/${mealId}/reviews`));
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to load reviews");
-      setReviews(data);
+      const raw = (await res.json()) as ReviewApi[];
+
+      if (!res.ok) throw new Error("Failed to load reviews");
+
+      // map backend shape -> frontend shape
+      const normalized: Review[] = raw.map((r) => ({
+        id: r.review_id,
+        mealId: r.meal_id,
+        title: r.review_title,
+        description: r.review_description,
+        stars: r.stars,
+        createdDate: r.created_date,
+      }));
+
+      setReviews(normalized);
     } catch (err) {
-      setError(err.message);
+      if (err instanceof Error) setError(err.message);
     }
   };
 
@@ -33,14 +61,19 @@ export default function MealReviews({ mealId }) {
     fetchReviews();
   }, [mealId]);
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: name === "stars" ? Number(value) : value,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage(null);
     setError(null);
@@ -55,6 +88,7 @@ export default function MealReviews({ mealId }) {
           meal_id: Number(mealId),
         }),
       });
+
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to submit review");
 
@@ -62,26 +96,24 @@ export default function MealReviews({ mealId }) {
       setForm({ title: "", description: "", stars: 5 });
       fetchReviews();
     } catch (err) {
-      setError(err.message);
+      if (err instanceof Error) setError(err.message);
     }
   };
 
   return (
-    <div className="mt-6  pt-1">
-      {/* Review List */}
+    <div className="mt-6 pt-1">
       {error && <p className="text-red-500 mb-2">{error}</p>}
+
       {reviews.length > 0 ? (
         <ul className="space-y-3 mb-6">
-          {reviews.map((review) => (
-            <li
-              key={review.review_id}
-              className="bg-amber-200 p-3 rounded shadow"
-            >
-              <p className="font-semibold">{review.review_title}</p>
-              <p className="text-sm text-gray-600">
-                {review.review_description}
+          {reviews.map((r) => (
+            <li key={r.id} className="bg-amber-200 p-3 rounded shadow">
+              <p className="font-semibold">{r.title}</p>
+              <p className="text-sm text-gray-600">{r.description}</p>
+              <p className="text-yellow-500">⭐ {r.stars}/5</p>
+              <p className="text-xs text-gray-500 mt-1">
+                {new Date(r.createdDate).toLocaleDateString("en-GB")}
               </p>
-              <p className="text-yellow-500">⭐ {review.stars}/5</p>
             </li>
           ))}
         </ul>
@@ -89,7 +121,6 @@ export default function MealReviews({ mealId }) {
         <p className="text-sm text-gray-500">No reviews yet.</p>
       )}
 
-      {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-3 mt-4">
         <input
           type="text"
@@ -120,7 +151,6 @@ export default function MealReviews({ mealId }) {
             </option>
           ))}
         </select>
-
         <button className="bg-lime-600 text-white px-4 py-2 rounded hover:bg-lime-700">
           Submit Review
         </button>

@@ -96,7 +96,7 @@
   border-radius: 6px;
 }
 .contactForm button:hover {
-  background: #c0930d;
+  background: #fc871a;
 }
 
 /* Info Box */
@@ -144,7 +144,7 @@
 }
 
 .infoCard {
-  background: #fff;
+  background: #fbe7ccf4;
   border-radius: 8px;
   padding: 2rem;
   text-align: center;

@@ -1,6 +1,7 @@
 import styles from "./ContactHero.module.css";
+import type { JSX } from "react";
 
-export default function ContactHero() {
+export default function ContactHero(): JSX.Element {
   return (
     <section className={styles.hero}>
       <div className={styles.overlay}>

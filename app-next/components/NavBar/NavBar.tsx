@@ -1,19 +1,28 @@
 "use client";
-import { use, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { JSX } from "react";
+
+// Define props for NavLink
+interface NavLinkProps {
+  href: string;
+  label: string;
+  mobile?: boolean;
+}
+
 // NavLink component
-function NavLink({ href, label, mobile = false }) {
-  //get the current path
+function NavLink({ href, label, mobile = false }: NavLinkProps): JSX.Element {
   const pathname = usePathname();
 
+  // Determine if link is active
   const isActive = pathname === href || pathname.startsWith(`${href}/`);
 
   const baseClasses =
     "text-sm text-gray-800 dark:text-gray-200 hover:text-orange-400 dark:hover:text-orange-400 transition";
 
   const activeClasses =
-    "text-orange-400 semifont-bold dark:text-orange-400 border-b-2 border-orange-400";
+    "text-orange-400 font-semibold dark:text-orange-400 border-b-2 border-orange-400";
 
   return (
     <Link
@@ -28,14 +37,15 @@ function NavLink({ href, label, mobile = false }) {
     </Link>
   );
 }
-export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+
+// Navbar component
+export default function Navbar(): JSX.Element {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
-    <header className=" dark:bg-gray-900 fixed top-0 pb-1 left-0 w-full z-50 bg-white ">
-      {" "}
-      <div className="pt-2 px-4 sm:px-6 lg:px-20 max-w-screen-xl mx-auto ">
-        <nav className="flex items-center justify-between h-10  ">
+    <header className="dark:bg-gray-900 fixed top-0 pb-1 left-0 w-full z-50 bg-white">
+      <div className="pt-2 px-4 sm:px-6 lg:px-20 max-w-screen-xl mx-auto">
+        <nav className="flex items-center justify-between h-10">
           <Link
             href="/"
             className="flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white"
@@ -48,7 +58,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop links */}
-          <div className="hidden md:flex space-x-6 ">
+          <div className="hidden md:flex space-x-6">
             <NavLink href="/" label="Home" />
             <NavLink href="/meals" label="Meals" />
             <NavLink href="/about" label="About Us" />
@@ -60,7 +70,7 @@ export default function Navbar() {
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-900 font-extrabold dark:text-gray-200 focus:outline-none "
+              className="text-gray-900 font-extrabold dark:text-gray-200 focus:outline-none"
               aria-label="Toggle menu"
             >
               <svg
@@ -89,9 +99,10 @@ export default function Navbar() {
           </div>
         </nav>
       </div>
+
       {/* Mobile menu dropdown */}
       {isOpen && (
-        <div className="md:hidden bg-white dark:bg-black-900 px-4 pb-3 pt-3 space-y-2">
+        <div className="md:hidden bg-white dark:bg-gray-900 px-4 pb-3 pt-3 space-y-2">
           <NavLink href="/" label="Home" mobile />
           <NavLink href="/meals" label="Meals" mobile />
           <NavLink href="/about" label="About" mobile />

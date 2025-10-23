@@ -1,11 +1,16 @@
 import "./globals.css";
-import NavBar from "@/components/NavBar/NavBar";
-import Footer from "@/components/Footer/Footer";
+import NavBar from "../components/NavBar/NavBar";
+import Footer from "../components/Footer/Footer";
+import type { ReactNode } from "react";
 export const metadata = {
   title: "Meal Sharing App - Meals, Events, Restaurants, and More",
 };
 
-export default function RootLayout({ children }) {
+// Define props for RootLayout
+interface RootLayoutProps {
+  children: ReactNode;
+}
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body className="flex flex-col min-h-screen">

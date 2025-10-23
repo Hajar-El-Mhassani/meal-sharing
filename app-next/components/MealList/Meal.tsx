@@ -1,7 +1,18 @@
 import Link from "next/link";
-const MealCard = ({ meal }) => {
+import type { Meal } from "../../types/meal";
+
+//Create type for props from meal interface
+type Props = { meal: Meal };
+/**
+ * A single meal card component
+ *
+ * @param {Props} props - The props of the component
+ * @param {Meal} props.meal - The meal object
+ * @returns {JSX.Element} - The JSX element of the component
+ */
+export default function MealCard({ meal }: Props) {
   return (
-    <div className="grid grid-rows-[auto_1fr] w-full max-w-[300px]  gap-2 h-full pb-2 rounded-lg bg-white shadow-sm overflow-hidden transition-transform duration-200 hover:-translate-y-1">
+    <div className="grid grid-rows-[auto_1fr] w-full max-w-[300px] gap-2 h-full pb-2 rounded-lg bg-white shadow-sm overflow-hidden transition-transform duration-200 hover:-translate-y-1">
       <div className="aspect-[4/3] w-full overflow-hidden">
         <img
           src={meal.image}
@@ -10,18 +21,17 @@ const MealCard = ({ meal }) => {
         />
       </div>
 
-      <div className="p-2 px-4 flex flex-col justify-between h-full ">
+      <div className="p-2 px-4 flex flex-col justify-between h-full">
         <h4 className="text-md font-medium text-gray-800 mb-2">{meal.title}</h4>
 
-        <p className="text-xs text-gray-500 mb-3  text-justify ">
+        <p className="text-xs text-gray-500 mb-3 text-justify">
           {meal.description}
         </p>
 
         <div className="text-sm text-gray-600 space-y-2 text-justify">
           <p>
             <span className="font-medium">Date:</span>{" "}
-            <span className="text-xs text-gray-500 mb-2  text-justify">
-              {" "}
+            <span className="text-xs text-gray-500 mb-2 text-justify">
               {new Date(meal.when).toLocaleDateString("en-GB", {
                 weekday: "long",
                 year: "numeric",
@@ -32,26 +42,20 @@ const MealCard = ({ meal }) => {
           </p>
           <p>
             <span className="font-medium">Location:</span>{" "}
-            <span className="text-xs text-gray-500 mb-2  text-justify">
+            <span className="text-xs text-gray-500 mb-2 text-justify">
               {meal.location}
             </span>
           </p>
-          <p>
-            <span className="font-medium">Max reservation:</span>{" "}
-            <span className="text-xs text-gray-500 mb-2  text-justify">
-              {meal.max_reservation}
-            </span>
-          </p>
+
           <p className="text-lime-600 font-stretch-expanded font-bold text-base mt-2">
             ${meal.price}
           </p>
         </div>
 
-        {/* Bottom right action */}
         <div className="mt-4 text-right">
           <Link
             href={`/meals/${meal.id}`}
-            className="inline-block px-4 py-1 bg-yellow-300 text-sm text-white   rounded-2xl hover:bg-blue-600 transition"
+            className="inline-block px-4 py-1 bg-yellow-300 text-sm text-white rounded-2xl hover:bg-blue-600 transition"
           >
             See Details &rarr;
           </Link>
@@ -59,6 +63,4 @@ const MealCard = ({ meal }) => {
       </div>
     </div>
   );
-};
-
-export default MealCard;
+}

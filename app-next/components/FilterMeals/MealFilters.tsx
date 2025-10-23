@@ -1,30 +1,51 @@
 "use client";
+
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { FiSearch } from "react-icons/fi";
 import { MdRefresh } from "react-icons/md";
-
-export default function MealFilters() {
+import type { JSX } from "react";
+export default function MealFilters(): JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [search, setSearch] = useState(searchParams.get("title") || "");
-  const [sortKey, setSortKey] = useState(searchParams.get("sortKey") || "");
-  const [sortDir, setSortDir] = useState(searchParams.get("sortDir") || "asc");
+  // States (explicitly typed as string)
+  const [search, setSearch] = useState<string>(searchParams.get("title") ?? "");
+  const [sortKey, setSortKey] = useState<string>(
+    searchParams.get("sortKey") ?? ""
+  );
+  const [sortDir, setSortDir] = useState<string>(
+    searchParams.get("sortDir") ?? "asc"
+  );
 
+  // Update URL when any filter changes
   useEffect(() => {
     const params = new URLSearchParams();
     if (search) params.set("title", search);
     if (sortKey) params.set("sortKey", sortKey);
     if (sortDir) params.set("sortDir", sortDir);
     router.push(`/meals?${params.toString()}`);
-  }, [search, sortKey, sortDir]);
+  }, [search, sortKey, sortDir, router]);
 
-  const handleReset = () => {
+  // Reset filters
+  const handleReset = (): void => {
     setSearch("");
     setSortKey("");
     setSortDir("");
     router.push("/meals");
+  };
+
+  // Handlers with event types
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setSearch(e.target.value);
+  };
+
+  const handleSortKeyChange = (e: ChangeEvent<HTMLSelectElement>): void => {
+    setSortKey(e.target.value);
+  };
+
+  const handleSortDirChange = (e: ChangeEvent<HTMLSelectElement>): void => {
+    setSortDir(e.target.value);
   };
 
   return (
@@ -34,9 +55,9 @@ export default function MealFilters() {
         <input
           type="text"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={handleSearchChange}
           placeholder="Search meals..."
-          className="w-full px-3 py-[7px]  rounded-md shadow-sm focus:ring-2 focus:ring-orange-400"
+          className="w-full px-3 py-[7px] rounded-md shadow-sm focus:ring-2 focus:ring-orange-400"
         />
         <FiSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
       </div>
@@ -44,8 +65,8 @@ export default function MealFilters() {
       {/* Sort by */}
       <select
         value={sortKey}
-        onChange={(e) => setSortKey(e.target.value)}
-        className={`w-[160px] px-3 py-[9px]  rounded-md shadow-sm focus:ring-2 focus:ring-orange-400 ${
+        onChange={handleSortKeyChange}
+        className={`w-[160px] px-3 py-[9px] rounded-md shadow-sm focus:ring-2 focus:ring-orange-400 ${
           sortKey === "" ? "text-gray-400" : "text-gray-700"
         }`}
       >
@@ -60,8 +81,8 @@ export default function MealFilters() {
       {/* Sort direction */}
       <select
         value={sortDir}
-        onChange={(e) => setSortDir(e.target.value)}
-        className={`w-[160px] px-3 py-[9px]  rounded-md shadow-sm focus:ring-2 focus:ring-orange-400 ${
+        onChange={handleSortDirChange}
+        className={`w-[160px] px-3 py-[9px] rounded-md shadow-sm focus:ring-2 focus:ring-orange-400 ${
           sortDir === "" ? "text-gray-400" : "text-gray-700"
         }`}
       >

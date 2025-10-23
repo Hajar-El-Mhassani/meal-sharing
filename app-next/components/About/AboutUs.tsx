@@ -1,4 +1,6 @@
-const sections = [
+import React from "react";
+
+const sections: { title: string; content: string }[] = [
   {
     title: "Who We Are",
     content: `We are an innovative meal-sharing platform that connects passionate home cooks with people looking to discover authentic food experiences. Our platform empowers hosts to share their recipes, stories, and cultures through food. Whether you’re a host or a guest, we help you create memories around the table.`,
@@ -24,23 +26,12 @@ const sections = [
 export default function AboutPage() {
   return (
     <>
-      <section className="relative h-[30vh] flex items-center justify-center text-center text-black">
-        <div className="relative z-10 max-w-2xl px-6">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-            <span className="text-orange-400">About Us</span>{" "}
-          </h1>
-          <p className="text-lg sm:text-xl text-white">
-            Discover our story, values, and mission to connect people through
-            food.
-          </p>
-        </div>
-      </section>
       <section className="max-w-6xl mx-auto px-12  bg-white py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {sections.map((section, index) => (
             <div
               key={index}
-              className=" overflow-hidden shadow-md rounded-2xl bg-white"
+              className=" overflow-hidden shadow-md rounded-2xl bg-orange-50"
             >
               {/* Header */}
               <div className=" text-black px-6 py-2 text-lg font-semibold">

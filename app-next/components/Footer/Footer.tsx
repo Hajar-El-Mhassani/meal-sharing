@@ -3,19 +3,14 @@ import { EnvelopeIcon, PhoneIcon, MapPinIcon } from "@heroicons/react/24/solid";
 import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
 import { useState } from "react";
 export default function Footer() {
-  const [message, setMessage] = useState("");
-  const [showMessage, setShowMessage] = useState(false);
+  const [message, setMessage] = useState<string>("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData);
+    const formData = event.currentTarget;
+    const data = new FormData(formData);
     console.log(data);
     setMessage("Message sent successfully!");
-  };
-  const buttonHandle = () => {
-    setMessage("Message sent successfully!");
-    setShowMessage(!showMessage);
   };
 
   return (
@@ -92,17 +87,12 @@ export default function Footer() {
               />
               <button
                 type="submit"
-                onClick={buttonHandle}
                 className="px-4 py-2 bg-orange-400 text-white rounded-md hover:bg-orange-500 transition"
               >
                 Subscribe
               </button>
             </form>
-            {showMessage && (
-              <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">
-                {message}
-              </p>
-            )}
+            {message && <p className="text-green-700 mt-2">{message}</p>}
           </div>
         </div>
       </div>

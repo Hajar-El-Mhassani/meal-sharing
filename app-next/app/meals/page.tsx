@@ -1,11 +1,12 @@
 "use client";
 export const dynamic = "force-dynamic";
-import MealList from "@/components/MealList/MealList";
+import MealList from "../../components/MealList/MealList";
 import nextDynamic from "next/dynamic";
 import { Suspense } from "react";
+import HeaderMealsPage from "../../components/FilterMeals/HeaderMeals";
 // Load MealFilters as a client-only component dynamically
 const MealFilters = nextDynamic(
-  () => import("@/components/FilterMeals/MealFilters"),
+  () => import("../../components/FilterMeals/MealFilters"),
   {
     ssr: false,
   }
@@ -13,16 +14,7 @@ const MealFilters = nextDynamic(
 const MealsPage = () => {
   return (
     <>
-      <section className="relative h-[30vh] flex items-center justify-center text-center text-black">
-        <div className="relative z-10 max-w-2xl px-6">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-1">
-            Discover <span className="text-orange-400">All Delicious</span>{" "}
-            Meals from All Around{" "}
-            <span className="text-lime-900">the World</span>
-          </h1>
-        </div>
-      </section>
-
+      <HeaderMealsPage />
       <section className="px-6 sm:px-10 lg:px-20 py-1 max-w-screen-xl bg-white mx-auto text-center bg-white-300 dark:bg-gray-800">
         <div className="mx-auto w-full ">
           <Suspense fallback={<div>Loading filters...</div>}>

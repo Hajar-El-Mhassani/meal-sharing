@@ -1,8 +1,17 @@
 "use client";
 
 import MealReviews from "./MealReviews";
+import type { Meal } from "../../types/meal";
 
-export default function MealDetails({ meal, onReserveClick }) {
+type MealDetailsProps = {
+  meal: Meal | null | undefined;
+  onReserveClick: () => void;
+};
+
+export default function MealDetails({
+  meal,
+  onReserveClick,
+}: MealDetailsProps) {
   if (!meal) return null;
 
   return (
@@ -40,7 +49,7 @@ export default function MealDetails({ meal, onReserveClick }) {
             {meal.location}
           </p>
           <p>
-            <span className="font-semibold"> Available Seats:</span>
+            <span className="font-semibold">Available Seats:</span>
             <br />
             {meal.available_reservations}
           </p>
@@ -59,6 +68,7 @@ export default function MealDetails({ meal, onReserveClick }) {
             Reserve your seat now and join us for a warm, flavorful, and
             memorable meal!
           </p>
+
           {meal.available_reservations > 0 ? (
             <>
               <p className="text-sm text-gray-600 mb-3">
