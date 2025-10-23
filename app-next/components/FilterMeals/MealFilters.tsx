@@ -40,6 +40,7 @@ export default function MealFilters(): JSX.Element {
     setSearch(e.target.value);
   };
 
+  // Handlers for sort key and direction
   const handleSortKeyChange = (e: ChangeEvent<HTMLSelectElement>): void => {
     setSortKey(e.target.value);
   };
