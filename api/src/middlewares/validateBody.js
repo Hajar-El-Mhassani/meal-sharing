@@ -1,4 +1,5 @@
 export const validateBody = (schema) => async (req, res, next) => {
+  //contains helper functions that use Zod to validate incoming requests using the schemas
   try {
     const result = await schema.safeParseAsync(req.body);
     if (!result.success) {

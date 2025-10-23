@@ -24,8 +24,7 @@ const sections = [
 export default function AboutPage() {
   return (
     <>
-      <section className=" bg-meal-hero relative h-[60vh] flex items-center justify-center text-center text-white">
-        <div className="bg-lime-600/30 w-full h-full absolute top-0 left-0"></div>
+      <section className="relative h-[30vh] flex items-center justify-center text-center text-black">
         <div className="relative z-10 max-w-2xl px-6">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
             <span className="text-orange-400">About Us</span>{" "}
@@ -36,7 +35,7 @@ export default function AboutPage() {
           </p>
         </div>
       </section>
-      <section className="max-w-6xl mx-auto px-12  bg-lime-700 py-12">
+      <section className="max-w-6xl mx-auto px-12  bg-white py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {sections.map((section, index) => (
             <div

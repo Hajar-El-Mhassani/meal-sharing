@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import AnimatedSection from "@/components/AnimatioSection/AnimatedSection";
+
 const services = [
   {
     title: "Reserve a Meal",
@@ -35,8 +35,7 @@ const services = [
 export default function ServicesGrid() {
   return (
     <>
-      <section className=" bg-meal-hero relative h-[60vh] flex items-center justify-center text-center text-white">
-        <div className="bg-lime-600/30 w-full h-full absolute top-0 left-0"></div>
+      <section className="  relative h-[30vh] flex items-center justify-center text-center text-black">
         <div className="relative z-10 max-w-2xl px-6">
           <h1 className="text-4xl sm:text-5xl font-bold mb-4">
             Discover <span className="text-orange-400">Our Services</span>{" "}

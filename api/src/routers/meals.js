@@ -9,12 +9,15 @@ import { mealQueryValidator } from "../middlewares/validateQueryMeal.js";
 import { queryMealSchema } from "../schemas/queryMealSchema.js";
 
 const mealsRouter = express.Router();
+//In meals.js, I define routes using RESTFull methods (GET, POST, PUT, DELETE).
 
 //Router to get all meals
 mealsRouter.get(
   "/meals",
   mealQueryValidator(queryMealSchema),
   async (req, res) => {
+    //This fetches all meals using Knex from the MySQL database.
+    //It supports sorting, filtering by title, and limiting the number of results
     try {
       const {
         maxPrice,
@@ -104,7 +107,7 @@ mealsRouter.get(
   }
 );
 
-//router to get meals by ID
+//router to get a single meal  by ID
 mealsRouter.get(
   "/meals/:id",
   validateParamsId(paramsSchema),
@@ -150,7 +153,7 @@ mealsRouter.get(
   }
 );
 
-// router to get meals by title
+// router to update meals by title
 mealsRouter.put(
   "/meals/:id",
   validateParamsId(paramsSchema),

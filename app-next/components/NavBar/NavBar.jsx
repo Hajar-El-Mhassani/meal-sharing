@@ -10,10 +10,10 @@ function NavLink({ href, label, mobile = false }) {
   const isActive = pathname === href || pathname.startsWith(`${href}/`);
 
   const baseClasses =
-    "text-md font-bold text-gray-900 dark:text-gray-200 hover:text-orange-400 dark:hover:text-orange-400 transition";
+    "text-sm text-gray-800 dark:text-gray-200 hover:text-orange-400 dark:hover:text-orange-400 transition";
 
   const activeClasses =
-    "text-orange-400 dark:text-orange-400 border-b-2 border-orange-400";
+    "text-orange-400 semifont-bold dark:text-orange-400 border-b-2 border-orange-400";
 
   return (
     <Link
@@ -32,7 +32,8 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="bg-white dark:bg-gray-900 fixed top-0 left-0 w-full z-50">
+    <header className=" dark:bg-gray-900 fixed top-0 pb-1 left-0 w-full z-50 bg-white ">
+      {" "}
       <div className="pt-2 px-4 sm:px-6 lg:px-20 max-w-screen-xl mx-auto ">
         <nav className="flex items-center justify-between h-10  ">
           <Link
@@ -50,7 +51,8 @@ export default function Navbar() {
           <div className="hidden md:flex space-x-6 ">
             <NavLink href="/" label="Home" />
             <NavLink href="/meals" label="Meals" />
-            <NavLink href="/about" label="About" />
+            <NavLink href="/about" label="About Us" />
+            <NavLink href="/contact" label="Contact Us" />
             <NavLink href="/services" label="Services" />
           </div>
 
@@ -87,13 +89,13 @@ export default function Navbar() {
           </div>
         </nav>
       </div>
-
       {/* Mobile menu dropdown */}
       {isOpen && (
         <div className="md:hidden bg-white dark:bg-black-900 px-4 pb-3 pt-3 space-y-2">
           <NavLink href="/" label="Home" mobile />
           <NavLink href="/meals" label="Meals" mobile />
           <NavLink href="/about" label="About" mobile />
+          <NavLink href="/contact" label="Contact" mobile />
           <NavLink href="/services" label="Services" mobile />
         </div>
       )}

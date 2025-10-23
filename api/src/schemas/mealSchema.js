@@ -1,5 +1,5 @@
 import { z } from "zod";
-
+//defines reusable Zod schemas for validating route parameters and request data
 export const createMealSchema = z.strictObject({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),

@@ -8,6 +8,7 @@ import { reviewSchema, updateReviewSchema } from "../schemas/reviewSchema.js";
 import { paramsReviwIdSchema } from "../schemas/paramsReviewSchema.js";
 
 const reviewsRouter = express.Router();
+//In the reviews.js route, I handle user reviews for a specific meal.
 
 //Router to get all reviews
 reviewsRouter.get("/reviews", async (req, res) => {
@@ -111,7 +112,9 @@ reviewsRouter.put(
   }
 );
 
-//Router to create a new review
+//Router to create a new review or lets users submit a review
+//validates the review before inserting it using Zod.
+//This Zod schema checks that the review has a title, description, meal_id, and stars.
 reviewsRouter.post("/reviews", validateBody(reviewSchema), async (req, res) => {
   try {
     const validatedData = req.validatedBody;

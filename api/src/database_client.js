@@ -1,5 +1,5 @@
 import knex from "knex";
-
+//Connects to a postgres database hosted on Render using environment variables.
 const connection = knex({
   client: process.env.DB_CLIENT,
   connection: {
